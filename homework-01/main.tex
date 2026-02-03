@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage{import}
+
+
+\title{Advanced Algorithms\\Homework 01}
+\author{Felix Céard-Falkenberg\\7174020}
+
+\usepackage{../homework} % See homework.sty %
+\usepackage{amsmath}
+\usepackage{amssymb} 
+\usepackage[utf8]{inputenc}
+\usepackage{todonotes}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{bbold}
+\usepackage{kantlipsum}
+\usepackage[bottom]{footmisc}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}
+
+
+\newcommand*\dif{\mathop{}\mathrm{d}}
+\newcommand{\stepandtag}{%
+  \refstepcounter{equation}%
+  \tag{\theequation}%
+}
+\newcommand{\var}{\ensuremath{\text{Var}}}
+\newcommand{\group}{\ensuremath{\text{Group}}}
+\newcommand{\piml}{\ensuremath{\pi_{ML}}}
+\newcommand{\variance}[1]{\ensuremath{\text{\small \textcolor{gray}{$\pm #1$}}}}
+% \newcommand{\variance}[1]{\text{\tiny\textcolor{gray}{$\pm$ #1}}}
+
+
+\begin{document}
+
+\section{Question 3}
+
+\subsection{\textit{Prove that Till's Stable Matching algorithm leads to a perfect matching and terminates, or give a counter example.}}
+% We first note that we need to specify the constraint that
+% We have that $|P| = |S| = \frac{|W\cup M|}{2}$, as otherwise, we only match a subset of the men and women.
+
+\begin{theorem}
+  Till's Stable Matching algorithm leads to a perfect matching and terminates.
+\end{theorem}
+\begin{proof}
+
+  We can do so by using by running the Gale-Shapley algorithm with the following input:
+  \begin{itemize}
+    \item $X=P$
+    \item $Y=S$
+  \end{itemize}
+  This results in a perfect matching between the individuals of $P$ and $S$, with a benefit for the individuals in $P$.
+
+  By including individuals in $P$ from both $W$ and $M$, i.e.\ $P\cap W \neq \emptyset\land P\cap M \neq \emptyset$, we can make the algorithm more fair between the individuals from $W$ and $M$.
+
+  The conclusion that a perfect matching between $P$ and $S$ exists, i.e., that each individual in $P$ is matched to an individual in $S$, follows from the fact that the matching returned by the Gale-Shapley algorithm is stable and perfect. 
+
+  Furthermore, since we run the Gale-Shapley algorithm on the instance $(P, S)$, we know that it will not only terminate in $O(|P\cup S|^2) = O(|W\cup M|^2)$ time, but also that a stable matching between $P$ and $S$ is being found.
+
+\end{proof}
+
+\subsection{\textit{Prove that Till's algorithm leads to a stable perfect matching, or give a counter example.}}
+
+To answer this question, we can consider two cases: the case of a stable matching between $P$ and $S$, and the case of a stable matching between $W$ and $M$.
+
+\begin{theorem}
+  Till's algorithm is $(P, S)$-stable.
+\end{theorem}
+\begin{proof}
+  As Till's algorithm is a variant of the Gale-Shapley algorithm, we can guarantee that the algorithm returns a $(P, S)$-stable perfect matching from the properties of the Gale-Shapley algorithm.
+\end{proof}
+
+However, in the latter, we cannot guarantee that the algorithm returns a $(W, M)$-stable perfect matching. To this end, we construct an instance where Till's algorithm does not return a $(W, M)$-stable perfect matching to prove Theorem~\ref{thm:till-not-stable-w-m}.
+
+\begin{theorem}
+Till's algorithm is not $(W, M)$-stable.
+\label{thm:till-not-stable-w-m}
+\end{theorem}
+
+\begin{proof}  
+  Let us assume that $|W| = |M| = n$ with $n > 0$. 
+  We can chose $W$ and $M$ to be arbitrary sets, as the Gale-Shapley algorithm is garantees to return a $(W, M)$-stable perfect matching when running on the stance $(W, M)$.
+
+  Naturally, if we were to chose $P=W$ and $S=M$, we would obtain a $(W, M)$-stable perfect matching.
+
+  However, let us consider two individuals $w\in W$ and $m\in M$ such that they are paired together in the $(W, M)$-stable perfect matching returned by the Gale-Shapley algorithm and $w'$ and $m'$ the next individuals in the preference list of $w$ and $m$, respectively. Note that we constrain $w'\in W$ and $m' \in M$.
+
+  We can now construct our adversary instance by setting $P' = W\setminus \set{w} \cup \set{m}$ and $S' = M\setminus \set{m} \cup \set{w}$.
+  We assume, for the case of the adversary instance, that the pairing between $(P', S')$ is the same as the pairing between $(W, M)$, with the exception of $w$ being paired with $w'$ and $m$ being paired with $m'$, and the original partners of $w$ and $m$ in the original pairing are now paired together in the adversary instance.
+
+  Therefore, the returned pairing between $P'$ and $S'$ is therefore $(P', S')$-stable and perfect, however, the pair $(w, m)$ is now a blocking pair in the adversary matching.
+
+  Therefore, due to the existence of a blocking pair in the adversary matching, and the existence of such an adversary instance, we can conclude that Till's algorithm is not $(W, M)$-stable in general. This concludes the proof.
+\end{proof}
+
+Note that Theorem~\ref{thm:till-not-stable-w-m} does not hold for all instances. For example, the instance given in the lecture notes (see Figure~\ref{fig:lecture-notes-example}) does not result in a blocking pair when switching one or more pairs between $P$ and $S$, and therefore serves as a counter example that Theorem~\ref{thm:till-not-stable-w-m} holds in all cases.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{image.png}
+  \caption{Example from the lecture notes.}
+  \label{fig:lecture-notes-example}
+\end{figure}
+
+
+
+
+% \pagebreak
+% \appendix
+% \input{../gen_ai_statement.tex}
+
+
+
+\end{document}

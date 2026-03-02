@@ -12,6 +12,49 @@
 \section{Question 3}
 \subsection{\textbf{Give a polynomial-time algorithm to find a schedule of minimum cost by modelling it as a minimum cost flow problem}}
 
+% - m machines
+%     - each can process one job at a time
+%     - different speed $\ell_i \in \nn$
+
+% - n jobs
+%     - same size
+%         - processing time is speed $\ell_i$
+%     - different levels of urgency
+%     - cost function $c_j(t)$
+%         - cost of completing job $j$ at time $t$.
+%         - non-negative and monotone
+    
+
+We model this problem by modeling it as a minimum cost flow problem.
+We first describe how we model the problem as a graph problem, and then we prove the polynomial-time complexity of the algorithm.
+
+\textbf{Idea.}
+The idea of our algorithm is to model the sequential processing of the jobs by each machine as a multi-source single-sink flow problem, where each machine is a source and has to travers a set of jobs to reach the sink. By adaptively removing edges from the graph and changing the capacity of specific edges, we can find a schedule of minimum cost.
+
+\textbf{Construction of the Graph.}
+Let us first create a node for each job $j \in \set{1, \dots, n}$. We will denote each node referencing a job as $J_j$, where $j$ denotes the index of the job. 
+
+We assume that we observe each job from the start, and that no constraints on the jobs exist, such that each machine can process an arbitrary sequence of jobs; Incorporating constraints on the order and availability of the jobs could be easily implemented in this step.
+
+Therefore, we add a connection of each node $J_j$ to each other node $J_i$ with $J_j\neq J_i$ with capacity $\delta\in \nn$. We will comment on the value of $\delta$ later. Naturally, the edge is undirected, or equivalently, two directed edges in opposite directions. This can easily be done in $\mathcal{O}(n^2)$.
+
+Now, we add a node for each of the $m$ machines in the graph, and denote, analogously to the previous paragraph, each machine node as $M_i$. We then connect each machine node $M_i$ to each job node $J_j$ for all $i \in \set{1, \dots, m}$ and $j\in \set{1, \dots, n}$ with capacity $\ell_i$. This can easily be done in $\mathcal{O}(m\cdot n)\leq \mathcal{O}(n^2)$.
+
+Finally, we add a sink node $S$ to the graph. We connect each job node $J_j$ to the sink node $S$ with capacity $\delta$. This can obviously be done in $\mathcal{O}(n)$.
+
+In total, the construction of the graph takes $\mathcal{O}(m + n + n^2 + n \cdot m + n) = \mathcal{O}(m + m \cdot n + n^2)$. Assuming that $n > m$, we can simplify this to $\mathcal{O}(n^2)$, however, there might be cases where $n < m$. We refer to this graph as $G=(V, E)$ with vertices $V$ and edges $E$.
+
+\textbf{Algorithm.}
+
+Before introducing the algorithm, we need to formalize how we define the value of $\delta$.
+In short, we set $\delta = 1$ and adjust $\ell_i$ such that they are all integers by multiplying them by some joint factor.
+% We introduce this variable to handle real-valued processing time $\ell_i$ of the machines.
+% If at least one of the machines has a real-valued processing time, we multiply $\ell_i$ by some factor, such that each machine has an integer processing time. We can then denote as $\delta$ the 
+
+We now describe our algorithm.
+We first initialize the flow $f$ to be zero at every edge of the graph. This can obviously be done in $\mathcal{O}(|E|)$.
+
+We can then push flow from each of the sources to the sink
 
 
 \end{document}

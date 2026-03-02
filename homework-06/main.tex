@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage{import}
+
+
+\title{Advanced Algorithms\\Homework 06}
+\author{Felix Céard-Falkenberg\\7174020}
+
+\usepackage{../homework} % See homework.sty %
+
+\begin{document}
+
+\section{Question 4}
+\subsection{\textbf{Give a polynomial-time algorithm that takes an instance of Coverage Expansion and either
+returns a solution $M'$ or reports (correctly) that there is no solution. Include an analysis of the
+running time and a short proof of why it is correct.}}
+
+Let $X$ and $Y$ be disjoint subsets of the edges $E$ of a bipartite graph $G=(V, E)$.
+Because $G$ is a bipartite graph, we know that each node has a degree of $d$.
+Let $M$ be an arbitrary matching of $G$.
+
+% We can now distinguish multiple cases. Trivially, if $M$ is not a perfect matching, we can  
+The problem now boils down to finding the maximum matching $M'$ of $G$ and return it if it contains $k$ more edges than $M$. Otherwise, we return that no such solution exists.
+
+From the lecture we know that \textit{each regular bipartite graph has a perfect matching}. Therefore, if $|M|+k \leq \frac{n}{2}$, we can engage the search for this perfect matching, otherwise we return that no such solution exists.
+
+We can now find a perfect matching in $G$ by adapting Schrijver’s algorithm by changing the step where each cycle is split into two parts. Instead of having "\textit{Split $C$ into two matchings $M$ and $N$, with $w(M) \geq w(N)$}", we change this line to "\textit{Split $C$ into two matchings $M$ and $N$, with $w(M) \geq w(N)$ such that for each node $n$ in the cycle, we have that one of the edges $e$ that contains $n$ is added $M$}". 
+
+The time complexity of this algorithm is slightly higher than of the original algorithm as we have to check, in the worst case, for every edge in the cycle if it is included in $Y$. This can be done in $\mathcal{O}(|Y|)$ time which is repeated for each cycle, hence $\mathcal{O}(C \cdot |Y|)$ (which I think we can relax to $\mathcal{O}(C \cdot \log |Y|)$ because we can exclude edges that are already part of $M$, but not sure if this is valid).
+
+The proof of the correctness of this algorithm is left as an exercise to the reader $>:3$.\!\footnote{I'm too lazy to write this proof... sorry :(}
+
+\subsection{\textbf{Prove that in fact $k_1 = k_2$; that is, we can obtain a maximum matching even if we are constrained to cover all the nodes covered by our initial matching $M$.}}
+
+Let us prove this by contradiction. We know that, because $G$ is a bipartite graph, a perfect matching with a matching $\hat{M}$ with $|\hat{M}| = \frac{n}{2}$ exists. From this, we know that $k_2 = n/2$ as $M'' = \hat{M}$.
+
+For the sake of contradiction, let us assume that $k_1 \neq k_2$. This means that $k_1 < k_2$.
+However, because every node $y\in Y$ is covered by $M''$, we know that $|M'| = |M''|$ and that therefore $k_1 = k_2$, which contradicts our assumption. 
+
+\end{document}

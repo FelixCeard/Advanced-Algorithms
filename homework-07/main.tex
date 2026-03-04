@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage{import}
+
+
+\title{Advanced Algorithms\\Homework 06}
+\author{Felix Céard-Falkenberg\\7174020}
+
+\usepackage{../homework} % See homework.sty %
+
+\begin{document}
+
+\section{Question 2}
+\subsection{\textbf{Show (using the logic definition of $\er$) that PosSLP $\in \er$.}}
+
+Recall the definition of $P\in \er$:
+\begin{equation*}
+    I \in P \Leftrightarrow \exists w \in \rr^*: A(I, w) = 1
+\end{equation*}
+where $A$ is an algorithm that runs on a real RAM and $I$ is an instance of the problem.
+
+The problem PosSLP is the decision problem of whether a Straight Line Program (SLP) computes a positive or negative number.
+Formally, we have that:
+\begin{equation*}
+    a_0 = 1 \text{ and } a_k = a_i \circ a_j, \quad \text{ with } i, j < k \text{ and } \circ \in \set{+, -, \times}\;.
+\end{equation*}
+
+We can easily construct such a verifier ($A$) and therefore show that PosSLP $\in \er$.
+% We construct our verifier such that the last computed number $a_n$ of the SLP is the only accepting input of our verifier for that program. 
+Let us denote, for each instance $I$ of PosSLP, the computed number as $a_n$, where $n$ is the number of steps in the SLP.
+
+Our verifier $A$ can then easily compute $a_n$ in $\mathcal{O}(n)$ steps as each of the $\circ$ operations can be computed in $\mathcal{O}(1)$ time on a real RAM. 
+We can therefore accept the string iff $a_n > 0$, which can be done in $\mathcal{O}(1)$ as the comparisons operations are included in the real RAM model, and $w = a_n$, as it is the only accepting input for that program. Otherwise, we reject the string.
+
+Obviously, our verifier $A$ runs in polynomial time on every instance of PosSLP. Therefore, we have that PosSLP $\in \er$.
+
+\subsection{\textbf{Show that the problem lies in $\er$.}}
+
+Let us consider an arbitrary instance $I$ of the \textsc{Euclidean Travelling Salesperson Problem}. That instance has $n$ points, which are somehow connected such that they allow to form at least one path that vist all points exactly once. 
+% Let us denote the shortest possible path as $P$, with a length of $\ell$.
+
+The ETSP problem is the decision problem of whether a path exists with length less than $t\in \qq$.
+
+First, we can assume that such a path can even exist. If no such path exists, then $A(I, w) = 0$ for all $w\in \rr^*$, and therefore the instance $I$ is not in ETSP.
+
+Furthermore, we can assume that a path with length $\ell < t$ exists, as otherwise any input of the verifier will be rejected, and therefore the instance $I$ is not in ETSP.
+
+% Therefore, let us denote the shortest path going throught all points exactly once as $P$ with length $\ell < t$.
+We can now construct our verifier $A$: 
+First, if $w$ contains the length of the path, we can check in $\mathcal{O}(1)$ whether the length is less than $t$. If it is not, we can directly reject the string.
+
+Otherwise, we can compute the length of the path in $\mathcal{O}(n)$ time by traversing the path and summing up the distances between the points. 
+The euclidean distance between two points $a$ and $b$ is defined as $\sqrt{(a - b)^2}$.
+As the problem does not specify the dimensionality of the points, we have to use the general formula for the euclidean distance in an $m$-dimensional space, which is given by: 
+\begin{equation*}
+    d(a, b) = \sqrt{\sum_{i=1}^m (a^i - b^i)^2}
+\end{equation*}
+where $a^i$ and $b^i$ are the $i$-th coordinates of points $a$ and $b$ respectively.
+Note that, because neither the square root operation is included in the real RAM model, nor do efficient algorithm exist to compute the square root of a number in polynomial time,\!\footnote{From what I understood, square root algorithms only converge towards the correct value, but regardless of the precision of the digits, newton's method and co. will never fully reach the final value for all numbers (e.g. due to the existence of irrational numbers).} we have to resort to the $L_1$ distance instead,\!\footnote{We attempted to derive a formula for bypassing the square root operation, but it quickly became too complex and is probably not worth the effort. Interesting problem though...} which is a valid distance metric in euclidean space. The $L_1$ distance is defined as:
+\begin{equation*}
+    d(a, b) = \sum_{i=1}^m |a^i - b^i|
+\end{equation*}
+
+We can obviously compute $a^i - b^i$ in $\mathcal{O}(1)$, and by multiplying the result by $-1$ if $a^i - b^i < 0$, we can ensure that the result is always positive, and therefore ensure the correct computation of the absolute value. Note that computing the absolute value is a subprogram that first checks if the number is negative, and then multiplies it by $-1$ if it is, which are a finite number of operations (3 operations in total, (1) check if the number is negative, (2) set a RAM slot to -1, and (3) multiply the number with the RAM slot where -1 is saved), which can obviously be done in $\mathcal{O}(1)$ time on a real RAM.
+Because we have to compute this distance for each of the $m$ dimensions and sum them up (which takes $\mathcal{O}(m)$ time), we can compute $d(a, b)$ in $\mathcal{O}(m)$ steps. 
+
+
+% \begin{align*}
+%     t &= \sum_{i=1}^{n-1} d(a_i, a_{i+1}) \\
+%     t &= \sum_{i=1}^{n-1} \sqrt{\sum_{j=1}^m (a^i_j - a^{i+1}_j)^2} &&\mid {()}^2 \\
+%     t^2 &= \left( \sum_{i=1}^{n-1} \left[ \sum_{j=1}^m (a^i_j - a^{i+1}_j)^2 \right] \right) + \left( \sum_{1 \leq i < j \leq n} 2 \cdot \left[ \sqrt{\sum_{j=1}^m (a^i_j - a^{i+1}_j)^2} \cdot \sqrt{\sum_{j=1}^m (a^i_j - a^{i+1}_j)^2} \right] \right) &&| \sqrt{x}\sqrt{y} = \sqrt{xy}\\
+%     t^2 &= \left( \sum_{i=1}^{n-1} \left[ \sum_{j=1}^m (a^i_j - a^{i+1}_j)^2 \right] \right) + \left( \sum_{1 \leq i < j \leq n} 2 \cdot \left[ \sqrt{\sum_{j=1}^m (a^i_j - a^{i+1}_j)^2 \cdot \sum_{j=1}^m (a^i_j - a^{i+1}_j)^2} \right] \right) \\
+% \end{align*}
+
+Note that the addition of the the distances at each step can be done in $\mathcal{O}(1)$ time on a real RAM. 
+If the length of the path is less than $t$ and matches the given path length, if given, then we accept the string. Otherwise, we reject $w$. The comparisons can be done in $\mathcal{O}(1)$ time on a real RAM.
+
+Therefore, the overall time complexity of our verifier is $\mathcal{O}(n \cdot m)$ as we have to compute the distance between each pair of points on the given path and sum them up. Note that this is still polynomial time, as $m$ is relative to the size of the instance, as increasing the size of the input by one dimension will increase $m$ by one. In other words, our verifier runs in polynomial time w.r.t. to the size of the input and not in pseudo-polynomial time.
+
+% Note that depending on the formal definition of the encoding of the instance $I$, because $I$ has to be encoded in binary, summing up the path length could also be done in polynomial time.\!\footnote{A trivial definition encoding of $I$ would include the distances between each pair of point, and therefore restrict the path length to binary encoded numbers. However, another trivial definition would only include the coordinates of the points, and therefore the distances between some points could be irrational numbers.} 
+
+Because we can assume that such a path exists, encoding this path in $w$ would make the verifier accept the string. Therefore, we have that each instance $I$ of ETSP has a polynomial-time verifier, and therefore, we know that ETSP $\in \er$.
+
+\subsection{\textbf{It is unknown whether Euclidean Travelling Salesperson Problem is in NP? What could be the reason? Feel free to speculate here. One line answer suffices.}}
+
+The distance between two points can be irrational.
+If the verifier is a word RAM machine, the verifier would need to compute the digits of an irrational number in polynomial time and polynomial space, which is not possible.
+
+Approximation algorithms can be constructed, but the interplay between the error of the approximation (i.e., ensuring that the bounds of the approximation are below (or above) the correct solution) and the time (and space) complexity w.r.t. to the size of the input is really complicated to be known. 
+
+I believe that in some settings, it might be possible to construct a verifier that runs in polynomial time and polynomial space and decides ETSP, but generalizing this to all settings is probably not possible.
+
+\subsection{\textbf{What might be his reasons?}}
+
+I believe that ETSP is $\er$-hard, as the exponential time of the search comes from traversing the graph and not from the computation of the distance between two points (or the conversion of the numbers in binary).
+In the worst case, all $2^n$ possible paths need to be checked, and therefore the time complexity is not polynomial w.r.t. the size of the input.
+
+% While on a real RAM, the computation of the distance between two points can be done with perfect precision using the $L_1$ distance in polynomial time
+
+
+\end{document}

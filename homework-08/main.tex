@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{import}
+
+
+\title{Advanced Algorithms\\Homework 06}
+\author{Felix Céard-Falkenberg\\7174020}
+
+\usepackage{../homework} % See homework.sty %
+
+\begin{document}
+
+\section{Question}
+
+\subsection{\textbf{Argue that this is a correct algorithm for the Independent Set problem on graphs of maximum
+degree three}}
+
+We proove that the provided algorithm is correct by using a proof by exhaustion.
+Let us first consider the base cases.
+
+If $G$ has a node of degree $0$, then, by definition, it has to be included in the independent set, as $v$ is adjacent to no other vertex. Note that this rule is only here for completeness; A valid independent set could be found by ignoring vertices of degree $0$. However, in that case, the independent set would not be maximal.
+
+If $G$ has a node of degree $1$, then this node is only connected to one other node, which we denote as $u$. Therefore, to compute a (maximal or minimal\footnote{With minimal, I mean a fully complete independent set on $G$, but with minimal amount of nodes in the independent set, i.e. the worst best case. Lowkey sounds like set covering then.}) independent set, either $v$ or $u$, but not both, need to be included in the independent set. 
+Because including $u$ and $v$ in the independence set depends on the other nodes in the graph, we have to first solve the independence set of the graph $G$ without $\set{u, v}$, and then, if any neighbors of $u$ is in the independent set, we can return add $v$ to the independent set. Otherwise, we can add either $v$ or $u$ to the independent set.
+% By adding $v$ to the independent set, $u$ has to excluded from the independent set, and we therefore prune $v$ and $u$ from the graph. 
+% Because, by removing $\set{u,v}$ from the graph, new nodes with degree $1$ can occure. Thus, recursively going through the graph 
+
+If $G$ has a vertex of degree 2 with both neighbors being adjacent, then by adding $v$ to the independent set, both neighbors are covered, and can therefore be ignored for consideration in the independent set. Therefore, recursively solving the subset without $v$ and its neighbors will yield a correct solution.
+
+% If $G$ has a node of degree 2 with one of the neighbors having a degree of 2, then either adding $v$ or 
+
+If all degrees are of degree 2, then the solution is easy to compute.
+
+On the other hand, only nodes with degree 3 are in the graph, we need to consider all possible solutions exhaustively. Hence, we can recurse 1 time with just $v$ removed from the graph and not added to the independence set, which would then trigger either rule 3 or rule 4, and we can therefore find a solution where $v$ is not in the independent set. By recursing a second time with $v$ (and its neighbors) removed from the graph and $v$ included in the independent set, we are exhaustively trying out all the combination. Depending on the grading criterion, different behavior are prefered. However, a valid independent set would be returned. 
+
+Because nodes have a maximal degree of 3, no other cases can exist.
+
+\subsection{\textbf{How do we solve the problem if all vertices have degree exactly two?}}
+
+This is super easy. A graph where every node has degree 2 forms a chain that is connected such that it forms a "loop". Thus, starting from any node, we can add it to the independent set, and remove its neighbors. Then, we have exactly two nodes with degree 1. We can then add one of the nodes with degree 1 to the independent set and remove it, and its neighbors, from the graph. Because in a graph with $n$ nodes, this last step is being repeated at least $n-3$ times, and at most $n-2$ times, we have an algorithm that runs in linear time.
+
+
+
+% Take any node $v$ in the graph, remove it and its 2 neighbors from the graph and add $v$ to the independent set. Then, 
+
+\end{document}

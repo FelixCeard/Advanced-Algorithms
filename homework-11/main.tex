@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{import}
+
+
+\title{Advanced Algorithms\\Homework 06}
+\author{Felix Céard-Falkenberg\\7174020}
+
+\usepackage{../homework} % See homework.sty %
+
+\begin{document}
+
+\section{Question 2}
+
+\subsection{\textbf{Show that the \textit{Independent Set Problem} in planar graphs can be solved in $\mathcal{O}(6^k n)$ time using branching.}}
+
+We know that each node of a planar graph has a degree of at most 5. 
+% Therefore, we can test all possible combinations of nodes to include in the independent set 
+Therefore we can test at each step, each of the 6 possible combinations of nodes to include in the independent set. 
+Assuming that a branch has a depth of $k$, then we have found an independent set of size at least $k$.
+Therefore, in the worst case, we have to test all possible combinations of nodes to include in the independent set, which is $6^k$. Lastly, because the graph might not be connected, we have to repeat this process for each of the connected components in the graph, which is then in the worst case $n$ times. Therefore, we have $\mathcal{O}(6^k n)$ time complexity.
+
+\section{Question 3}
+\subsection{\textbf{Show that the \textit{Independent Set Problem} in planar graphs has a linear sized kernel.}}
+
+Given that every planar graph is at 4-colorable, we know that if $n \geq 4 \cdot k$, then we can always find an independent set of size at least $k$. In that case, we can return yes immediately.
+
+Otherwise, we have $n < 4k$. In that case, we leave the instance unchanged. Hence the remaining instance has at most $4k-1$ vertices, which is linear in $k$.
+
+% Thus, we obtain in polynomial time an equivalent instance $(G',k')$ such that either it is a trivial yes-instance, or it has size at most $4k-1 = \mathcal{O}(k)$. Therefore, the Independent Set Problem on planar graphs has a linear sized kernel.
+
+
+
+
+\end{document}

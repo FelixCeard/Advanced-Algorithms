@@ -2,7 +2,7 @@
 \usepackage{import}
 
 
-\title{Advanced Algorithms\\Homework 06}
+\title{Advanced Algorithms\\Homework 08}
 \author{Felix Céard-Falkenberg\\7174020}
 
 \usepackage{../homework} % See homework.sty %
@@ -17,29 +17,148 @@ degree three}}
 We proove that the provided algorithm is correct by using a proof by exhaustion.
 Let us first consider the base cases.
 
-If $G$ has a node of degree $0$, then, by definition, it has to be included in the independent set, as $v$ is adjacent to no other vertex. Note that this rule is only here for completeness; A valid independent set could be found by ignoring vertices of degree $0$. However, in that case, the independent set would not be maximal.
+If $G$ has a node of degree $0$, then, by definition, it has to be included in the independent set, as $v$ is adjacent to no other vertex. Note that this rule is only here for completeness; A valid independent set could be found by ignoring vertices of degree $0$. However, in that case, the independent set would not be a maxmimum.
 
-If $G$ has a node of degree $1$, then this node is only connected to one other node, which we denote as $u$. Therefore, to compute a (maximal or minimal\footnote{With minimal, I mean a fully complete independent set on $G$, but with minimal amount of nodes in the independent set, i.e. the worst best case. Lowkey sounds like set covering then.}) independent set, either $v$ or $u$, but not both, need to be included in the independent set. 
-Because including $u$ and $v$ in the independence set depends on the other nodes in the graph, we have to first solve the independence set of the graph $G$ without $\set{u, v}$, and then, if any neighbors of $u$ is in the independent set, we can return add $v$ to the independent set. Otherwise, we can add either $v$ or $u$ to the independent set.
+If $G$ has a node of degree $1$, then this node is only connected to one other node, which we denote as $u$. Therefore, to compute a maximum independent set, either $v$ or $u$, but not both, need to be included in the independent set. 
+Because including $u$ and $v$ in the independence set depends on the other nodes in the graph, we have to first solve the independence set of the graph $G$ without $\set{u, v}$, and then, if any neighbors of $u$ is in the independent set, we can add $v$ to the independent set. Otherwise, we can add either $v$ or $u$ to the independent set.
 % By adding $v$ to the independent set, $u$ has to excluded from the independent set, and we therefore prune $v$ and $u$ from the graph. 
 % Because, by removing $\set{u,v}$ from the graph, new nodes with degree $1$ can occure. Thus, recursively going through the graph 
 
 If $G$ has a vertex of degree 2 with both neighbors being adjacent, then by adding $v$ to the independent set, both neighbors are covered, and can therefore be ignored for consideration in the independent set. Therefore, recursively solving the subset without $v$ and its neighbors will yield a correct solution.
 
+
+
+
+
+% If G has a vertex v of degree 2, and this vertex is adjacent to another vertex w of degree 2, then
+% let H be obtained by removing v and w, and adding an edge between the other neighbour of
+% v, say x, and the other neighbour of w, say y. removing v and its neighbour of G. Recursively
+% solve the problem for H, and then add one of v or w to the found solution.
+
+If $G$ has a vertex $v$ of degree 2, and that this vertex is adjacent to another vertex $w$ of degree 2, then the simplification rule can be applied to find a correct solution. Because $v - w - y$ form a chain, either $v$ or $w$ will be included in $S$. Furthermore, because $v$ has another neighbor $x$, and that therefore the chain $x - v - w - y$ exist. There are now multiple possibilities: either $x$ is included in $S$, or one of its neighbors, which is either $v$ or another neighbor of $x$. If $x\in S$, then we can add $w$ iff $y\notin S$. If $x\notin S$, then we have to add $v$ to $S$. The same argument can be repeated for $y$. Therefore, removing $\set{v, w}$ from the graph and adding an edge between $x$ and $y$ will yield a correct solution, as the maximal independent set will try to cover $x$ and $y$, and, depending on whether $x$, $y$, or their neighbors are included in $S$, we can add $v$ or $w$ to $S$.
+
+
+
+
+
+
 % If $G$ has a node of degree 2 with one of the neighbors having a degree of 2, then either adding $v$ or 
 
-If all degrees are of degree 2, then the solution is easy to compute.
+If all nodes are of degree 2, then the solution is easy to compute, as the graph forms a chain that is connected to form a loop.
 
-On the other hand, only nodes with degree 3 are in the graph, we need to consider all possible solutions exhaustively. Hence, we can recurse 1 time with just $v$ removed from the graph and not added to the independence set, which would then trigger either rule 3 or rule 4, and we can therefore find a solution where $v$ is not in the independent set. By recursing a second time with $v$ (and its neighbors) removed from the graph and $v$ included in the independent set, we are exhaustively trying out all the combination. Depending on the grading criterion, different behavior are prefered. However, a valid independent set would be returned. 
+% On the other hand, only 
+For nodes with degree 3, we need to consider all possible solutions exhaustively. Hence, we can recurse 1 time with just $v$ removed from the graph (which imply $v\notin S$), and a second time with $v$ and its neighbors removed from the graph, which would imply $v\in S$. The returned solution with the largest set is the best solution, and therefore the algorithm is correct.
 
-Because nodes have a maximal degree of 3, no other cases can exist.
+Because all nodes have a degree of at most 3, no other cases can exist. Therefore, the algorithm is correct and finds an independent set of the largest size.
 
 \subsection{\textbf{How do we solve the problem if all vertices have degree exactly two?}}
 
-This is super easy. A graph where every node has degree 2 forms a chain that is connected such that it forms a "loop". Thus, starting from any node, we can add it to the independent set, and remove its neighbors. Then, we have exactly two nodes with degree 1. We can then add one of the nodes with degree 1 to the independent set and remove it, and its neighbors, from the graph. Because in a graph with $n$ nodes, this last step is being repeated at least $n-3$ times, and at most $n-2$ times, we have an algorithm that runs in linear time.
+% This is super easy. 
+A graph where every node has degree 2 forms a chain that is connected such that it forms a "loop". 
+Thus, starting from any node, we can add it to the independent set, and remove its neighbors. Then, we have exactly two nodes with degree 1. We can then add one of the nodes with degree 1 to the independent set and remove it and its neighbors from the graph. Because in a graph with $n\geq 3$ nodes, this last step is being repeated $\frac{n-3}{2}$ times, we have an algorithm that runs in linear time.
+
+Note that $n$ cannot be less than 3, as then each node can have a degree of at most $n-1$, and with $n=2$, we have a maximal degree of $2-1 = 1$.
+
+\subsection{\textbf{Let $G$ be a graph with maximum degree three, and $n_3$ vertices of degree three. Let $v$ be a vertex of degree three. Let $H$ be obtained from $G$ by removing $v$, and then applying all reduction rules of the algorithm exhaustively (all if cases, but not the otherwise  case). Argue that $H$ has at most $n_3 - 4$ vertices of degree three.}}
 
 
+% The task asks us to explore the case where we only apply the rules for nodes with degree less than three. 
+% Let us consider an arbitrary graph $G$ where we remove an arbitrary vertex $v$, which has degree three. 
+% We consider, for each of the neighbors of $v$, whether they can be pruned from the graph:
 
-% Take any node $v$ in the graph, remove it and its 2 neighbors from the graph and add $v$ to the independent set. Then, 
+% First, no neighbor of $v$ can have degree 0 in $G$, as it would not be connected to $v$ in $G$. Therefore, all neighbors of $v$ have degree at least 1 in $G$.
+
+% Let a neighbor $u$ of $v$ have degree 1 in $G$. Then, $u$ is not connected to any other node in $H$, as it was only connected to $v$ in $G$. Therefore, we can add $u$ to the independent set, as it maximizes the size of $S$, and remove $u$ from $H$. 
+% % Because $v$ has at most three of such neighbors, we can apply this rule at most three times and have $n_3 - 3 - 1$ vertices of degree three in $H$. The $-1$ comes from the removal of $v$ itself.
+% This would remove at least 1 node from $H$.
+
+% If a neighbor $u$ of $v$ has degree 2 in $G$, then it has only degree 1 in $H$. In that case, we can remove $u$ and its neighbor from $H$, solve the graph without both nodes, and then add either $u$ or its neighbor to $S$. 
+% This would remove at least 2 nodes from $H$. 
+
+% If a neighbor $u$ of $v$ has degree 3 in $G$, then it has degree 2 in $H$. In that case, two cases arise: if $u$ is adjacent to another node $w$ with degree 2 in $H$, then we can remove $\set{u, w}$ from $H$, add an edge, and solve the problem for the new graph. 
+% This would remove at least 2 nodes from $H$.
+
+% Otherwise, if the neighbors of $u$ are adjacent, then we can remove them too. 
+% This would remove at least 3 nodes from $H$.
+
+% Because $v$ is connected to three nodes in $G$, which all have at least degree 1 in $G$, we can apply at least one of the rules to each of the neighbors of $v$. Because, in the worst case, we can only apply the first rule, which removes on the neighbor of $v$ itself, we can reduce $H$ by at most the three neighbors plus $v$ itself, resulting in a new graph with at most $n_3 - 3 - 1 = n_3 - 4$ nodes.
+
+% If $v$ is in subgraph where each of the nodes is of degree 3, then we would would apply the last stated rule, which would remove 3 nodes of degree 3 in $G$ from $H$, and because $v$ is of degree 3 in $G$, the new graph would have $n_3 - 3 - 1 = n_3 - 4$ nodes of degree 3.
+
+% Note that, because it is not stated that $G$ is connected, we can have that the $n_3 - 4$ rules doesn't hold for nodes of degree 3.
+
+
+% \section{Same Question again}
+
+% Let us assume that $G$ is connected, otherwise, we can find an easy counter example that shows that this does not hold. Furthermore, we assume that $n_3 \geq 4$.
+
+% We remove an arbitrary node $v$ of degree three from the graph.
+% This induces that the neighbors of $v$ have one less degree, and because the neighbors of $v$ can have maximum degree 3 in $G$, they have maximum degree 2 in $H$, and therefore subject to the "if" cases of the algorithm.
+
+% We make the the observation that, unless every node in $G$ has degree 3, there exists at least one node $u$ of degree 3 in $G$, which has at least one neighbor with degree less than 3 in $G$.
+
+% Let us assume the worst case, namely where every neighbor of $v$ has degree less than 3 in $G$. Therefore, we can apply the "if" rules recursively and remove neighbors of degree less than 3 from $G$. 
+% In our recursive process, we will remove a neighbor adjacent to $u$, which can be $v$ itself. Then, $u$ has degree 2 and is subject to the "if" rules of the algorithm. 
+% The neighbors of $u$ with degree less than 3 in $G$ follow the same recursive process. 
+% % However, if $u$ has a neighbor $w$ with degree 3 in $G$, then, because $u$ has degree 2 in $H$, and that the neighbors of $w$ are adjacent, we can remove $\set{u, w}$ from $H$.
+% % Therefore, we have to only consider the case where
+
+% At this point, after aplying all the recursive "if" rules, we have a graph $H$ where every node of degree 2 has two degree 3 neighbors. Otherwise, that node would have been removed by the "if" rules.
+
+
+% \section{Another Attempt}
+
+
+% Let us assume that $G$ is connected, otherwise, we can find an easy counter example that shows that this does not hold. Furthermore, we assume that $n_3 \geq 4$.
+Let us assume that $G$ is connected, as we can simply repeat the process for each of the subgraphs. 
+% otherwise, we can find an easy counter example that shows that this does not hold. 
+% Furthermore, we assume that each connected subgraph has $n_3 \geq 4$, as otherwise, the .
+
+By applying all the "if" rules exhaustively and recursively, we obtain a graph $H$ where every node is of degree at least 2. Furthermore, we can observe that every node of degree 2 has exactly two neighbors withh degree 3 that are not adjacent, as otherwise, the node would have been removed by an "if" rule.
+
+Let us now remove an arbitrary node $v$ with degree 3.
+Now, each of the neighbors of $v$ have one less degree. There exist two cases for each of the neighbors of $v$: either they have degree 2, or they have degree 1.
+
+If a neighbor $u$ of $v$ has degree 1 after removing $v$, then $u$ can be removed from on of the "if" rules. Because every node of degree 2 has two neighbors of degree 3, we know that, after removing $u$, the neighbor $w$ (with $w\neq v$) has degree 2, and therefore reduces $n_3$ by 1.
+
+Let $u$ be an arbitrary neighbor of $v$ with degree 2 after removing $v$. There exists two cases for $u$: (1) $u$ is adjacent to another node $w$ with degree 2 or (2) the neighbors of $u$ are adjacent.
+
+Let us consider the first case. Let us denote $z$ as the neighbor of $u$ with degree 2. Then, we know that the other neighbor of $z$ has degree 3. Because the other neighbor of $u$ has either degree 2 or 3, we can recursively apply the "if" rule, removing $\set{u, z}$ from the graph and connecting the two neighbors with an edge. This can be done until we connect two nodes with degree 3, or a node with degree 2 to a node with degree 3, where the node with degree 2 has no other neighbor with degree 2. 
+Because $u$ was a node with degree 3 in $G$, this process reduces $n_3$ by at least 1.
+
+Let us now consider the second case. In that case, we can apply the "if" rule removing $u$ and its neighbors. Because both neighbors of $u$ have degree 3, we know that we can reduce $n_3$ by at least 2, because $u$ is adjacent to at least one node with degree 3, and removing $u$ and that node reduces $n_3$ by 2. Both neighbors of $u$ cannot have degree 2, as otherwise they would be removed by an "if" rule and replaced by an edge.
+
+Because removing $v$ reduces $n_3$ by 1, and each of the three neighbors of $v$ also reduce $n_3$ by at least 1 by using the "if" rules, we know that, from deleting $v$, we reduce $n_3$ by at least 4. We then have at most
+\begin{equation*}
+    n_3 - 4
+\end{equation*}
+nodes of degree 3 after removing $v$ and applying all "if" rules exhaustively.
+% Then, we can apply the "if" rule removing $\set{u, w}$ from the graph. Again, because each node with degree 2 has only neighbors with degree 3, we know that, by removing $w$, a node with degree 3 loses one neighbor, and therefore also reduces $n_3$ by 1. 
+
+\subsection{\textbf{Let $G$ be a graph with maximum degree three, and $n_3$ vertices of degree three. Let $H'$ be the graph, obtained from $G$ by removing $v$ and its neighbours. Argue that $H'$ has at most $n_3 - 4$ vertices of degree three.}}
+
+We assume the same conditions as in the previous question.
+
+We remove $v$ and its three neighbors from $G$, and apply all the "if" rules exhaustively.
+We know that each neighbor of $v$ has at least degree 2 or 3 after applying the "if" rules.
+
+If a neighbor $u$ of $v$ has degree 2 after removing $v$, then we know that, by removing $u$, we reduce $n_3$ by at least 1. We then only have to consider the case where a neighbor $u$ of $v$ has degree 1 after removing $v$.
+
+It follows that $u$ is removed from the graph from the second "if" rule. Because, before removing $v$ but after applying the "if" rules, each node of degree 2 is connected to two nodes of degree 3, by removing $u$, a node with degree 3 loses one neighbor, and therefore this process reduces $n_3$ by at least 1.
+
+Therefore, because each of the three neighbors of $v$ induces a reduction of $n_3$ by at least 1 each, we know that, after removing $v$ and its neighbors, and applying all the "if" rules exhaustively, we have at most $n_3 - 4$ nodes of degree 3 in $H'$.
+
+
+\subsection{
+    \textbf{Show that the algorithm uses $\mathcal{O}^*(2^{n/4})$ time.}
+}
+
+Because $G$ has a maximum degree of 3, we know that each of the rules can be run in constant time on each nodes. This is because, in the worst case, we have to check that three neighbors of a node are (not) adjacent, and because, in the worst case, each neighbor has degree 3, we have to check $3^3$ nodes, which can therefore be done in $\mathcal{O}(1)$. Note that, to check if a rule can be applied, we still have to loop over all $n$ nodes, and therefore takes $\mathcal{O}(n)$ time.
+
+This means, that we can compute $H$ and $H'$ (from iii and iv), in polynomial time, as we only have to apply the "if" rules exhaustively and recursively. Because each rule removes at least one node, this process terminates in polynomial time.
+
+Therefore, after applying all the "if" rules in polynomial time, we have to "otherwise" rule, which tests whether including a node $v$ with degree 3 in $S$ is better than to exclude it. To that end, the algorithm bruteforces the best solution for every combination of subset of nodes with degree 3. This would take $\mathcal{O}^*(2^{n_3})$ time. However, because applying one of the rules of the otherwise rule reduces $n_3$ by at least 4, we can prune the bruteforce to $\mathcal{O}^*(2^{n_3/4})$ time.
+% 
+Because $n_3 \leq n$, we then have $\mathcal{O}^*(2^{n/4})$.
 
 \end{document}
